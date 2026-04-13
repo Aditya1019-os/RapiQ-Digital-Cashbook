@@ -67,10 +67,25 @@ export default function LoginPage() {
     setError('')
     setLoading(true)
     try {
-      const { error } = await supabase.auth.verifyOtp({ email, token: totp, type: 'totp' })
-      if (error) {
-        setError('Ungültiger Code. Bitte erneut versuchen.')
-        return
+      // Supabase MFA: challenge + verify
+      const { data: challengeData, error: challengeError } = await supabase.auth.mfa.challenge({ factorId: totp })
+      if (challengeError) {
+        // Fallback: try as email OTP
+        const { error } = await supabase.auth.verifyOtp({ email, token: totp, type: 'email' })
+        if (error) {
+          setError('Ungültiger Code. Bitte erneut versuchen.')
+          return
+        }
+      } else {
+        const { error: verifyError } = await supabase.auth.mfa.verify({
+          factorId: totp,
+          challengeId: challengeData.id,
+          code: totp,
+        })
+        if (verifyError) {
+          setError('Ungültiger Code. Bitte erneut versuchen.')
+          return
+        }
       }
       router.push(redirect)
       router.refresh()

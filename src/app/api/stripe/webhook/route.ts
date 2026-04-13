@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { createServiceClient } from '@/lib/supabase/server'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2024-06-20' })
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
 export async function POST(req: NextRequest) {
   const body = await req.text()
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
         .update({
           subscription_status: sub.status,
           subscription_plan: plan,
-          subscription_period_end: new Date(sub.current_period_end * 1000).toISOString(),
+          subscription_period_end: new Date((sub as unknown as { current_period_end: number }).current_period_end * 1000).toISOString(),
         })
         .eq('stripe_customer_id', customerId)
       break

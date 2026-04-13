@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
           tssId: merchant.tse_tss_id,
           txId: tseTxId,
           clientId: merchant.tse_client_id,
-          vat7Net,
+          vat7Net: vat_7_net,
           vat19Net: vat_19_net,
           paymentMethod: payment_method || 'cash',
           total,

@@ -3,6 +3,11 @@ import { createClient } from '@/lib/supabase/server'
 import JSZip from 'jszip'
 import { formatDateTime } from '@/lib/utils'
 
+function toCsv(headers: string[], rows: string[][]): string {
+  const escape = (v: string) => `"${String(v).replace(/"/g, '""')}"`
+  return [headers.map(escape).join(';'), ...rows.map(r => r.map(escape).join(';'))].join('\r\n')
+}
+
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url)
@@ -115,11 +120,6 @@ export async function GET(req: NextRequest) {
       tx.tse_signature_base64 || '',
     ])
 
-    function toCsv(headers: string[], rows: string[][]): string {
-      const escape = (v: string) => `"${String(v).replace(/"/g, '""')}"`
-      return [headers.map(escape).join(';'), ...rows.map(r => r.map(escape).join(';'))].join('\r\n')
-    }
-
     const zip = new JSZip()
     const folder = zip.folder('dsfinvk-export')!
     folder.file('transactions.csv', toCsv(txCsvHeaders, txRows))
@@ -139,8 +139,9 @@ Dieses Exportpaket enthält alle erforderlichen Dateien gemäß
 DSFinV-K v2.3 (Digitale Schnittstelle der Finanzverwaltung für Kassensysteme).`)
 
     const buffer = await zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' })
+    const uint8 = new Uint8Array(buffer)
 
-    return new NextResponse(buffer, {
+    return new NextResponse(uint8, {
       headers: {
         'Content-Type': 'application/zip',
         'Content-Disposition': `attachment; filename="dsfinvk-${from}-${to}.zip"`,

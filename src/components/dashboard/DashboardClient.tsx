@@ -195,7 +195,7 @@ export function DashboardClient({ merchant, todayTx, weekTx, monthTx, thirtyDayT
               <XAxis dataKey="day" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={v => `€${v}`} />
               <Tooltip
-                formatter={(v: number) => [formatCurrency(v), 'Umsatz']}
+                formatter={(v) => [formatCurrency(v as number), 'Umsatz']}
                 contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
               />
               <Bar dataKey="total" radius={[4, 4, 0, 0]}>
@@ -227,7 +227,7 @@ export function DashboardClient({ merchant, todayTx, weekTx, monthTx, thirtyDayT
                   ))}
                 </Pie>
                 <Legend iconType="circle" iconSize={8} formatter={(v: string) => <span className="text-xs">{v}</span>} />
-                <Tooltip formatter={(v: number) => formatCurrency(v)} />
+                <Tooltip formatter={(v) => formatCurrency(v as number)} />
               </PieChart>
             </ResponsiveContainer>
           ) : (

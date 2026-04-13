@@ -23,11 +23,12 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
     const receiptUrl = `${process.env.NEXT_PUBLIC_APP_URL}/receipts/${tx.id}`
 
-    const buffer = await renderToBuffer(
-      React.createElement(ReceiptDocument, { transaction: tx, receiptUrl })
-    )
+    const element = React.createElement(ReceiptDocument, { transaction: tx, receiptUrl }) as React.ReactElement<{ transaction: TransactionWithLines; receiptUrl: string }>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const buffer = await renderToBuffer(element as any)
+    const uint8 = new Uint8Array(buffer)
 
-    return new NextResponse(buffer, {
+    return new NextResponse(uint8, {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment; filename="beleg-${String(tx.transaction_number).padStart(6, '0')}.pdf"`,

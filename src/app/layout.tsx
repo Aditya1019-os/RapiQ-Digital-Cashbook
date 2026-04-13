@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { OfflineBanner } from '@/components/ui/OfflineBanner'
+import { CookieBanner } from '@/components/ui/CookieBanner'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -22,6 +23,7 @@ export default function RootLayout({
       <body className={`${inter.className} bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 antialiased`}>
         <OfflineBanner />
         {children}
+        <CookieBanner />
       </body>
     </html>
   )
