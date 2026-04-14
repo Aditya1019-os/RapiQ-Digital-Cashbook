@@ -1,6 +1,10 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? 'https://placeholder.supabase.co'
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? 'placeholder-anon-key'
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? 'placeholder-service-key'
+
 function makeCookieHandlers() {
   const cookieStore = cookies()
   return {
@@ -20,17 +24,9 @@ function makeCookieHandlers() {
 }
 
 export function createClient() {
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    makeCookieHandlers()
-  )
+  return createServerClient(SUPABASE_URL, SUPABASE_ANON_KEY, makeCookieHandlers())
 }
 
 export function createServiceClient() {
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    makeCookieHandlers()
-  )
+  return createServerClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, makeCookieHandlers())
 }
