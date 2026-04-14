@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { createClient } from '@/lib/supabase/server'
 import { CashbookClient } from '@/components/cashbook/CashbookClient'
 import { startOfDay, endOfDay } from 'date-fns'

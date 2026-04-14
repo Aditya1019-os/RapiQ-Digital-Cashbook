@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { createClient } from '@/lib/supabase/server'
 import { DashboardClient } from '@/components/dashboard/DashboardClient'
 import { startOfDay, endOfDay, subDays, startOfMonth, endOfMonth } from 'date-fns'
