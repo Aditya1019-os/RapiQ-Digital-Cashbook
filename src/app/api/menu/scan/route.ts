@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import OpenAI from 'openai'
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+export const dynamic = 'force-dynamic'
 
 const MENU_SYSTEM_PROMPT = `You are a German menu parser. Extract all items from this menu image.
 For each item return: name (string), price (float in euros),
@@ -16,6 +16,7 @@ Example: [{"name":"Cappuccino","price":3.50,"suggested_vat_rate":19},
 export const maxDuration = 30
 
 export async function POST(req: NextRequest) {
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
   try {
     const { data: { user } } = await createClient().auth.getUser()
     if (!user) return NextResponse.json({ error: 'Nicht autorisiert' }, { status: 401 })

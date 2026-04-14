@@ -3,9 +3,10 @@ import { createServiceClient } from '@/lib/supabase/server'
 import { createTss, createClient as createFiskalyClient, FiskalyError } from '@/lib/fiskaly/client'
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+export const dynamic = 'force-dynamic'
 
 export async function POST(req: NextRequest) {
+  const resend = new Resend(process.env.RESEND_API_KEY)
   try {
     const body = await req.json()
     const {
