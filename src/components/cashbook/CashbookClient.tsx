@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Loader2, CheckCircle, AlertCircle, BookOpen, History, Lock } from 'lucide-react'
+import { Loader2, AlertCircle, BookOpen, History, Lock } from 'lucide-react'
 import { formatCurrency, formatDate, formatDateTime } from '@/lib/utils'
 import { cn } from '@/lib/utils'
 import type { CashbookEntry, AuditLog } from '@/types/database'
@@ -22,7 +22,8 @@ export function CashbookClient({ merchant, cashExpected, todayEntry, auditLog, p
   const [note, setNote] = useState(todayEntry?.note || '')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [saved, setSaved] = useState(false)
+  const savedState = useState(false)
+  const setSaved = savedState[1]
   const [tab, setTab] = useState<'entry' | 'audit'>('entry')
 
   const alreadySaved = !!todayEntry

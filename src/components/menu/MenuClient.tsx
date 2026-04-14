@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Camera, Plus, Loader2, Check, X, AlertCircle, Pencil, Trash2, ScanLine } from 'lucide-react'
+import { Camera, Plus, Loader2, Check, X, AlertCircle, Pencil, ScanLine } from 'lucide-react'
 import { formatCurrency, cn } from '@/lib/utils'
 import type { MenuItem } from '@/types/database'
 
@@ -86,7 +86,7 @@ export function MenuClient({ merchant, menuItems: initialItems }: Props) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           merchant_id: merchant.id,
-          items: scannedItems.map(({ _key, ...item }) => ({ ...item, category: vatToCategory(item.suggested_vat_rate) })),
+          items: scannedItems.map(item => ({ name: item.name, price: item.price, suggested_vat_rate: item.suggested_vat_rate, category: vatToCategory(item.suggested_vat_rate) })),
         }),
       })
       if (!res.ok) throw new Error('Speichern fehlgeschlagen')

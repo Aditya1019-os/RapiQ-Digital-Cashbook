@@ -1,5 +1,5 @@
 'use client'
-import { useState, useCallback, useRef, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import { Delete, X, CheckCircle, CreditCard, Banknote, Loader2, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react'
 import { formatCurrency, calculateVat, cn } from '@/lib/utils'
 import type { MenuItem } from '@/types/database'

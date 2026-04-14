@@ -17,7 +17,7 @@ export function ReceiptDownloadButton({ transactionId }: { transactionId: string
       a.download = `beleg-${transactionId.slice(0, 8)}.pdf`
       a.click()
       URL.revokeObjectURL(url)
-    } catch (err) {
+    } catch {
       alert('Fehler beim PDF-Download. Bitte erneut versuchen.')
     } finally {
       setLoading(false)

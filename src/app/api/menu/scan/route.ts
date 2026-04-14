@@ -22,7 +22,8 @@ export async function POST(req: NextRequest) {
 
     const formData = await req.formData()
     const image = formData.get('image') as File | null
-    const merchant_id = formData.get('merchant_id') as string
+    // merchant_id available for future per-merchant menu scoping
+    formData.get('merchant_id')
 
     if (!image) return NextResponse.json({ error: 'Kein Bild hochgeladen' }, { status: 400 })
     if (image.size > 20 * 1024 * 1024) {

@@ -1,8 +1,8 @@
 import {
-  Document, Page, Text, View, StyleSheet, Image
+  Document, Page, Text, View, StyleSheet
 } from '@react-pdf/renderer'
 import type { TransactionWithLines } from '@/types/database'
-import { formatDateTime, formatCurrency, truncateSignature } from '@/lib/utils'
+import { formatDateTime, truncateSignature } from '@/lib/utils'
 
 const styles = StyleSheet.create({
   page: {

@@ -3,12 +3,12 @@ import { useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
-  BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip,
+  BarChart, Bar, XAxis, YAxis, Tooltip,
   ResponsiveContainer, Cell, PieChart, Pie, Legend
 } from 'recharts'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency, formatDate } from '@/lib/utils'
-import { format, subDays, startOfDay, eachDayOfInterval } from 'date-fns'
+import { format, subDays, eachDayOfInterval } from 'date-fns'
 import { toZonedTime } from 'date-fns-tz'
 import { Calculator, TrendingUp, CreditCard, Banknote, Shield, ArrowRight, AlertTriangle } from 'lucide-react'
 import { cn } from '@/lib/utils'

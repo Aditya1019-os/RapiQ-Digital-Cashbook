@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { DashboardClient } from '@/components/dashboard/DashboardClient'
-import { startOfDay, endOfDay, subDays, startOfMonth, endOfMonth, format } from 'date-fns'
+import { startOfDay, endOfDay, subDays, startOfMonth, endOfMonth } from 'date-fns'
 import { toZonedTime } from 'date-fns-tz'
 
 const TZ = 'Europe/Berlin'

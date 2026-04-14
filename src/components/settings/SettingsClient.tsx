@@ -5,13 +5,13 @@ import { Loader2, Check, Shield, CreditCard, Download, Trash2, Bell, Sliders } f
 import { cn } from '@/lib/utils'
 import type { Merchant } from '@/types/database'
 
-interface Props { merchant: Merchant; userEmail: string }
+interface Props { merchant: Merchant; userEmail?: string }
 
 const CATEGORY_KEYS = ['bakery', 'cafe', 'drinks', 'retail']
 const DEFAULT_NAMES: Record<string, string> = { bakery: 'Backwaren', cafe: 'Heißgetränke', drinks: 'Getränke', retail: 'Sonstiges' }
 const DEFAULT_VATS: Record<string, number> = { bakery: 7, cafe: 19, drinks: 19, retail: 19 }
 
-export function SettingsClient({ merchant, userEmail }: Props) {
+export function SettingsClient({ merchant }: Props) {
   const router = useRouter()
   const [saving, setSaving] = useState<string | null>(null)
   const [saved, setSaved] = useState<string | null>(null)
