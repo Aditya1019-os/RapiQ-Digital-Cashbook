@@ -58,6 +58,8 @@ export function CalculatorClient({ merchant, menuItems }: CalculatorProps) {
   const [showMenu, setShowMenu] = useState(true)
   const [fiskalyTxId, setFiskalyTxId] = useState<string | null>(null)
   const [tsStarted, setTsStarted] = useState(false)
+  // In-Haus / Außer-Haus toggle — affects VAT: In-Haus food = 19%, Außer-Haus food = 7%
+  const [serviceMode, setServiceMode] = useState<'inhouse' | 'takeaway'>('takeaway')
 
   const buttonNames = (merchant.button_names as Record<string, string>) || {}
   const vatRates = (merchant.default_vat_rates as Record<string, number>) || {}
@@ -115,7 +117,14 @@ export function CalculatorClient({ merchant, menuItems }: CalculatorProps) {
 
     const qty = multiplier || 1
     const lineAmount = amount * qty
-    const { net, vat } = calculateVat(lineAmount, btn.vatRate)
+
+    // §12 UStG: food categories switch between 7% (takeaway) and 19% (in-house)
+    const foodCategories = ['bakery', 'cafe']
+    const effectiveVat = foodCategories.includes(btn.key) && serviceMode === 'inhouse'
+      ? 19
+      : btn.vatRate
+
+    const { net, vat } = calculateVat(lineAmount, effectiveVat)
 
     if (discountMode) {
       // Apply as discount
@@ -137,10 +146,10 @@ export function CalculatorClient({ merchant, menuItems }: CalculatorProps) {
     } else {
       const item: BasketItem = {
         id: crypto.randomUUID(),
-        description: `${btn.label}${qty > 1 ? ` × ${qty}` : ''}`,
+        description: `${btn.label}${qty > 1 ? ` × ${qty}` : ''}${serviceMode === 'inhouse' && foodCategories.includes(btn.key) ? ' (In-Haus)' : ''}`,
         quantity: qty,
         unitPrice: amount,
-        vatRate: btn.vatRate,
+        vatRate: effectiveVat,
         netAmount: net,
         vatAmount: vat,
         grossAmount: lineAmount,
@@ -163,15 +172,20 @@ export function CalculatorClient({ merchant, menuItems }: CalculatorProps) {
     startTseTransaction()
     const qty = multiplier || 1
     const lineAmount = item.price * qty
-    const { net, vat } = calculateVat(lineAmount, item.vat_rate)
+    // Apply in-house VAT override for food items (7% → 19%)
+    const foodVatRates = [7]
+    const effectiveVat = foodVatRates.includes(item.vat_rate) && serviceMode === 'inhouse'
+      ? 19
+      : item.vat_rate
+    const { net, vat } = calculateVat(lineAmount, effectiveVat)
     setBasket(prev => [
       ...prev,
       {
         id: crypto.randomUUID(),
-        description: `${item.name}${qty > 1 ? ` × ${qty}` : ''}`,
+        description: `${item.name}${qty > 1 ? ` × ${qty}` : ''}${serviceMode === 'inhouse' && item.vat_rate === 7 ? ' (In-Haus)' : ''}`,
         quantity: qty,
         unitPrice: item.price,
-        vatRate: item.vat_rate,
+        vatRate: effectiveVat,
         netAmount: net,
         vatAmount: vat,
         grossAmount: lineAmount,
@@ -366,6 +380,34 @@ export function CalculatorClient({ merchant, menuItems }: CalculatorProps) {
             className="flex-1 rounded-xl py-2 text-sm font-bold bg-gray-800 text-gray-300 hover:bg-gray-700 transition"
           >
             CLR
+          </button>
+        </div>
+      </div>
+
+      {/* ── In-Haus / Außer-Haus toggle ── */}
+      <div className="flex-shrink-0 px-3 pb-2">
+        <div className="flex rounded-xl overflow-hidden border border-gray-700 text-sm font-semibold">
+          <button
+            onClick={() => setServiceMode('takeaway')}
+            className={cn(
+              'flex-1 py-2 transition flex items-center justify-center gap-1.5',
+              serviceMode === 'takeaway'
+                ? 'bg-amber-500 text-white'
+                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+            )}
+          >
+            🥡 Außer-Haus <span className="text-xs opacity-75">(7%)</span>
+          </button>
+          <button
+            onClick={() => setServiceMode('inhouse')}
+            className={cn(
+              'flex-1 py-2 transition flex items-center justify-center gap-1.5',
+              serviceMode === 'inhouse'
+                ? 'bg-purple-600 text-white'
+                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+            )}
+          >
+            🍽️ In-Haus <span className="text-xs opacity-75">(19%)</span>
           </button>
         </div>
       </div>

@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Camera, Plus, Loader2, Check, X, AlertCircle, Pencil, ScanLine } from 'lucide-react'
+import { Camera, Plus, Loader2, Check, X, AlertCircle, Pencil, FileText } from 'lucide-react'
 import { formatCurrency, cn } from '@/lib/utils'
 import type { MenuItem } from '@/types/database'
 
@@ -43,9 +43,20 @@ export function MenuClient({ merchant, menuItems: initialItems }: Props) {
     setScannedItems([])
 
     try {
+      const isPdf = file.type === 'application/pdf'
+
+      if (isPdf && file.size > 10 * 1024 * 1024) {
+        throw new Error('PDF zu groß. Maximale Größe: 10 MB')
+      }
+      if (!isPdf && file.size > 20 * 1024 * 1024) {
+        throw new Error('Bild zu groß. Maximale Größe: 20 MB')
+      }
+
       const formData = new FormData()
+      // Use same 'image' field — API handles both image and PDF
       formData.append('image', file)
       formData.append('merchant_id', merchant.id)
+      formData.append('file_type', isPdf ? 'pdf' : 'image')
 
       const res = await fetch('/api/menu/scan', { method: 'POST', body: formData })
       const data = await res.json()
@@ -54,7 +65,7 @@ export function MenuClient({ merchant, menuItems: initialItems }: Props) {
 
       const parsed: ScannedItem[] = data.items || []
       if (parsed.length === 0) {
-        setScanError('Keine Artikel erkannt. Bitte versuchen Sie ein klareres Foto.')
+        setScanError('Keine Artikel erkannt. Bitte versuchen Sie ein klareres Foto oder eine andere PDF-Seite.')
         return
       }
 
@@ -163,9 +174,16 @@ export function MenuClient({ merchant, menuItems: initialItems }: Props) {
           <label className={cn('flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium cursor-pointer transition',
             isGrowth ? 'bg-indigo-600 hover:bg-indigo-700 text-white' : 'bg-gray-200 text-gray-500 cursor-not-allowed'
           )}>
-            <ScanLine className="h-4 w-4" />
-            Menü scannen
-            {isGrowth && <input type="file" accept="image/*,application/pdf" className="hidden" onChange={handleFileSelect} />}
+            <Camera className="h-4 w-4" />
+            Foto scannen
+            {isGrowth && <input type="file" accept="image/*" capture="environment" className="hidden" onChange={handleFileSelect} />}
+          </label>
+          <label className={cn('flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium cursor-pointer transition',
+            isGrowth ? 'bg-purple-600 hover:bg-purple-700 text-white' : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+          )}>
+            <FileText className="h-4 w-4" />
+            PDF hochladen
+            {isGrowth && <input type="file" accept="application/pdf" className="hidden" onChange={handleFileSelect} />}
           </label>
         </div>
       </div>

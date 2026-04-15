@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic'
 import { createClient } from '@/lib/supabase/server'
 import { CalculatorClient } from '@/components/calculator/CalculatorClient'
+import { ProductGridClient } from '@/components/calculator/ProductGridClient'
 
 export default async function CalculatorPage() {
   const supabase = createClient()
@@ -8,7 +9,7 @@ export default async function CalculatorPage() {
 
   const { data: merchant } = await supabase
     .from('merchants')
-    .select('id, button_names, default_vat_rates, tse_tss_id, tse_client_id, tse_serial_number')
+    .select('id, button_names, default_vat_rates, tse_tss_id, tse_client_id, tse_serial_number, pos_mode')
     .eq('user_id', user!.id)
     .single()
 
@@ -18,7 +19,18 @@ export default async function CalculatorPage() {
     .eq('merchant_id', merchant!.id)
     .eq('is_active', true)
     .order('sort_order')
-    .limit(30)
+    .limit(50)
+
+  const posMode = (merchant as { pos_mode?: string })?.pos_mode ?? 'speed_run'
+
+  if (posMode === 'full_service') {
+    return (
+      <ProductGridClient
+        merchant={merchant!}
+        menuItems={menuItems || []}
+      />
+    )
+  }
 
   return (
     <CalculatorClient

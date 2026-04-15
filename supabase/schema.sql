@@ -262,3 +262,7 @@ CREATE INDEX IF NOT EXISTS idx_transaction_lines_transaction ON transaction_line
 CREATE INDEX IF NOT EXISTS idx_menu_items_merchant ON menu_items(merchant_id, is_active);
 CREATE INDEX IF NOT EXISTS idx_cashbook_merchant_date ON cashbook_entries(merchant_id, entry_date DESC);
 CREATE INDEX IF NOT EXISTS idx_audit_log_merchant ON audit_log(merchant_id, created_at DESC);
+
+-- ─── Migration: pos_mode + owner_name (added for Path A/B split) ──────────────
+ALTER TABLE merchants ADD COLUMN IF NOT EXISTS owner_name TEXT;
+ALTER TABLE merchants ADD COLUMN IF NOT EXISTS pos_mode TEXT NOT NULL DEFAULT 'speed_run' CHECK (pos_mode IN ('speed_run', 'full_service'));

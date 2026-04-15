@@ -12,7 +12,9 @@ export async function POST(req: NextRequest) {
     const {
       user_id,
       business_name,
+      owner_name,
       category,
+      pos_mode,
       address,
       city,
       postal_code,
@@ -22,7 +24,7 @@ export async function POST(req: NextRequest) {
       vat_profile,
     } = body
 
-    if (!user_id || !business_name || !steuernummer) {
+    if (!user_id || !business_name || !steuernummer || !pos_mode) {
       return NextResponse.json({ error: 'Pflichtfelder fehlen.' }, { status: 400 })
     }
 
@@ -65,7 +67,9 @@ export async function POST(req: NextRequest) {
       .upsert({
         user_id,
         business_name,
+        owner_name: owner_name || null,
         category,
+        pos_mode: pos_mode || 'speed_run',
         address,
         city,
         postal_code,

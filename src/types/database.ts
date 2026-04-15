@@ -22,6 +22,8 @@ export type LegalStructure =
 
 export type VatProfile = '7_only' | '19_only' | 'mixed'
 
+export type PosMode = 'speed_run' | 'full_service'
+
 export type PaymentMethod = 'cash' | 'card'
 
 export type TransactionStatus = 'pending' | 'completed' | 'cancelled' | 'storno'
@@ -34,7 +36,9 @@ export interface MerchantRow {
   id: string
   user_id: string
   business_name: string
+  owner_name: string | null
   category: BusinessCategory
+  pos_mode: PosMode
   address: string
   city: string
   postal_code: string
